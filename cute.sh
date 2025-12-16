@@ -41,20 +41,16 @@ This will read tasks from CONTRIBUTING.md with "###" headings and enable debug m
   fi
 
   local cute_tasks=$(awk -v heading="$cute_heading" -v sep="\x1f" '
-    $0 ~ "^" heading " " {
-      task_name = $0;
-      sub("^" heading " ", "", task_name);
-      next
-    }
     match($0, /```(sh|shell|bash|zsh)/, m) {
       if (task_name == "") {
         print "no task specified.";
         exit 1;
       }
-      shell_name = m[1];
-      if (shell_name == "shell") {
-        shell_name = "sh";
+      if (shell_name != "") {
+        print "the previous codeblock is not closed."
+        exit 1;
       }
+      shell_name = (m[1] == "shell" ? "sh" : m[1]);
       next
     }
     /```/ {
@@ -66,6 +62,11 @@ This will read tasks from CONTRIBUTING.md with "###" headings and enable debug m
     }
     shell_name != "" {
       command = command (command == "" ? "" : sep) $0;
+      next
+    }
+    $0 ~ "^" heading " " {
+      task_name = $0;
+      sub("^" heading " ", "", task_name);
       next
     }
   ' "$cute_target")
