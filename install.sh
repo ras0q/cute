@@ -11,8 +11,12 @@ SOURCE_STR="[ -f \"$DEST_FILE\" ] && . \"$DEST_FILE\""
 
 for RC_FILE in "$HOME/.bashrc" "$HOME/.zshrc"; do
   if [ -f "$RC_FILE" ]; then
-    if ! grep -q "cute" "$RC_FILE"; then
-      printf "\n# cute\n$SOURCE_STR\n" >> "$RC_FILE"
+    if ! grep -q "Cute" "$RC_FILE"; then
+      printf "\n# Cute\n$SOURCE_STR\n" >> "$RC_FILE"
     fi
   fi
 done
+
+echo "Cute installed successfully!"
+echo "Please restart your terminal with the following command:"
+echo "$ exec \$SHELL -l"
