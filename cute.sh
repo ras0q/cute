@@ -31,6 +31,12 @@ This will enable debug mode.
 
   local cute_files="$(find . -type f -name "*.md" -o -name "*.markdown" | sort)"
   local cute_tasks=$(echo "$cute_files" | xargs awk -v sep="\x1f" '
+    function slugify(str) {
+      gsub(/[^a-zA-Z0-9]+/, "-", str)
+      str = tolower(str)
+      gsub(/^-+|-+$/, "", str)
+      return str
+    }
     match($0, /^```(sh|shell|bash|zsh)/, m) {
       if (task_name == "") {
         print "no task specified.";
@@ -45,7 +51,8 @@ This will enable debug mode.
     }
     /^```/ {
       if (task_name != "" && shell_name != "" && command != "") {
-        print task_name sep shell_name sep command;
+        slug = slugify(task_name);
+        print task_name sep slug sep shell_name sep command;
       }
       task_name = "";
       shell_name = "";
@@ -72,16 +79,22 @@ This will enable debug mode.
     }
   ')
 
-  local cute_task_names=$(echo "$cute_tasks" | awk -F'\x1f' '{print $1}')
+  local cute_task_names=$(echo "$cute_tasks" | awk -F'\x1f' '{print $1 " (" $2 ")"} ')
+  local cute_duplicate_slugs=$(echo "$cute_tasks" | awk -F'\x1f' '{print $2}' | uniq -d)
+  if [ -n "$cute_duplicate_slugs" ]; then
+    echo "Duplicate task found: $cute_duplicate_slugs"
+    return 1
+  fi
+
   local cute_task_name=$(echo "$cute_task_names" | fzf --prompt="Select a task to execute: ")
   if [ -z "$cute_task_name" ]; then
     echo "No task selected."
     return 1
   fi
 
-  local cute_task=$(echo "$cute_tasks" | awk -F'\x1f' -v task="$cute_task_name" '$1 == task {print $0; exit}')
-  local cute_shell=$(echo "$cute_task" | awk -F'\x1f' '{print $2}')
-  local cute_command=$(echo "$cute_task" | cut -d$'\x1f' -f3- | sed "s/$(print '\x1f')/\n/g")
+  local cute_task=$(echo "$cute_tasks" | awk -F'\x1f' -v task="$cute_task_name" '$1 " (" $2 ")" == task {print $0; exit}')
+  local cute_shell=$(echo "$cute_task" | awk -F'\x1f' '{print $3}')
+  local cute_command=$(echo "$cute_task" | cut -d$'\x1f' -f4- | sed "s/$(print '\x1f')/\n/g")
   if [ -z "$cute_command" ]; then
     echo "No command found for task '$cute_task_name'."
     return 1
