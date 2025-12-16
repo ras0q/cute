@@ -19,7 +19,6 @@ This will enable debug mode.
   local cute_color_error="\033[31m"
   local cute_color_prompt="\033[90m"
 
-  local cute_files="$(find . -type f -name "*.md" -o -name "*.markdown" | sort)"
   local cute_debug_mode=0
 
   while getopts "hd" opt; do
@@ -30,6 +29,7 @@ This will enable debug mode.
   done
   shift $((OPTIND - 1))
 
+  local cute_files="$(find . -type f -name "*.md" -o -name "*.markdown" | sort)"
   local cute_tasks=$(echo "$cute_files" | xargs awk -v sep="\x1f" '
     match($0, /^```(sh|shell|bash|zsh)/, m) {
       if (task_name == "") {
