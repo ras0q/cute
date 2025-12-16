@@ -10,29 +10,26 @@ Options:
   -h: Show this help message and exit
   -f: Specify the markdown file to read (default: README.md)
   -H: Specify the heading to look for (default: "##")
-  -t: Specify the color for task output (default: "\\033[32m" - green)
-  -p: Specify the color for prompt output (default: "\\033[90m" - gray)
   -d: Enable debug mode (prints commands as they are executed)
 
 Example:
-  cute -f CONTRIBUTING.md -H "###" -t "\\033[34m" -p "\\033[90m" -d
-This will read tasks from CONTRIBUTING.md with "###" headings, use blue for task output, gray for prompt output, and enable debug mode.
+  cute -f CONTRIBUTING.md -H "###" -d
+This will read tasks from CONTRIBUTING.md with "###" headings and enable debug mode.
 '
+
+  local cute_color_success="\033[32m"
+  local cute_color_error="\033[31m"
+  local cute_color_prompt="\033[90m"
 
   local cute_target="README.md"
   local cute_heading="##"
-  local cute_color_task="\033[32m"
-  local cute_color_error="\033[31m"
-  local cute_color_prompt="\033[90m"
   local cute_debug_mode=0
 
-  while getopts "hf:H:t:p:d" opt; do
+  while getopts "hf:H:d" opt; do
     case "$opt" in
       h) echo "$cute_usage"; return 0 ;;
       f) cute_target="$OPTARG" ;;
       H) cute_heading="$OPTARG" ;;
-      t) cute_color_task="$OPTARG" ;;
-      p) cute_color_prompt="$OPTARG" ;;
       d) cute_debug_mode=1 ;;
     esac
   done
@@ -112,7 +109,7 @@ This will read tasks from CONTRIBUTING.md with "###" headings, use blue for task
 
   (
     if [ $cute_debug_mode -eq 1 ]; then
-      printf "${cute_color_task}▶ Executing task: %s\033[0m\n" "$cute_task"
+      printf "${cute_color_success}▶ Executing task: %s\033[0m\n" "$cute_task"
     fi
 
     export PS4="$(printf "${cute_color_prompt}[%s]$ \033[0m" "$cute_task")"
@@ -123,7 +120,7 @@ This will read tasks from CONTRIBUTING.md with "###" headings, use blue for task
     fi
 
     if [ $cute_debug_mode -eq 1 ]; then
-      printf "${cute_color_task}✔ Completed task: %s\033[0m\n" "$cute_task"
+      printf "${cute_color_success}✔ Completed task: %s\033[0m\n" "$cute_task"
     fi
   )
 }
