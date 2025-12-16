@@ -1,8 +1,8 @@
-#!/bin/sh -eu
+#!/usr/bin/env bash
 
-local cute_color_success="\033[32m"
-local cute_color_error="\033[31m"
-local cute_color_prompt="\033[90m"
+cute_color_success="\033[32m"
+cute_color_error="\033[31m"
+cute_color_prompt="\033[90m"
 
 _cute_usage() {
   cat <<EOF
@@ -148,3 +148,7 @@ cute() {
     _cute_execute_task "$cute_task"
   done
 }
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  cute "$@"
+fi
