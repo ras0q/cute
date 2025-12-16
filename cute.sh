@@ -4,40 +4,33 @@ cute() {
   local cute_usage='Cute: A CLI tool to exe"CUTE"s commands from markdown files.
 
 Usage:
-  cute [-h] [-f <file>] [-d]
+  cute [-h] [-d]
 
 Options:
   -h: Show this help message and exit
-  -f: Specify the markdown file to read (default: README.md)
   -d: Enable debug mode (prints commands as they are executed)
 
 Example:
-  cute -f CONTRIBUTING.md -d
-This will read tasks from CONTRIBUTING.md and enable debug mode.
+  cute -d
+This will enable debug mode.
 '
 
   local cute_color_success="\033[32m"
   local cute_color_error="\033[31m"
   local cute_color_prompt="\033[90m"
 
-  local cute_target="README.md"
+  local cute_files="$(find . -type f -name "*.md" -o -name "*.markdown" | sort)"
   local cute_debug_mode=0
 
-  while getopts "hf:d" opt; do
+  while getopts "hd" opt; do
     case "$opt" in
       h) echo "$cute_usage"; return 0 ;;
-      f) cute_target="$OPTARG" ;;
       d) cute_debug_mode=1 ;;
     esac
   done
   shift $((OPTIND - 1))
 
-  if [ ! -f "$cute_target" ]; then
-    echo "File '$cute_target' does not exist."
-    return 1
-  fi
-
-  local cute_tasks=$(awk -v sep="\x1f" '
+  local cute_tasks=$(echo "$cute_files" | xargs awk -v sep="\x1f" '
     match($0, /^```(sh|shell|bash|zsh)/, m) {
       if (task_name == "") {
         print "no task specified.";
@@ -77,7 +70,7 @@ This will read tasks from CONTRIBUTING.md and enable debug mode.
       task_name = m[1];
       next
     }
-  ' "$cute_target")
+  ')
 
   local cute_task_names=$(echo "$cute_tasks" | awk -F'\x1f' '{print $1}')
   local cute_task_name=$(echo "$cute_task_names" | fzf --prompt="Select a task to execute: ")
