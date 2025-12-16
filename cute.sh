@@ -40,79 +40,57 @@ This will read tasks from CONTRIBUTING.md with "###" headings and enable debug m
     return 1
   fi
 
-  local cute_tasks=$(awk -v heading="$cute_heading" '
+  local cute_tasks=$(awk -v heading="$cute_heading" -v sep="\x1f" '
     $0 ~ "^" heading " " {
-      if (has_code && task_name != "") print task_name;
-      task_name = $0; sub("^" heading " ", "", task_name);
-      has_code = 0;
+      task_name = $0;
+      sub("^" heading " ", "", task_name);
       next
     }
-    /```(sh|shell|bash|zsh)/ {
-      has_code = 1
+    match($0, /```(sh|shell|bash|zsh)/, m) {
+      if (task_name == "") {
+        print "no task specified.";
+        exit 1;
+      }
+      shell_name = m[1];
+      if (shell_name == "shell") {
+        shell_name = "sh";
+      }
+      next
     }
-    END {
-      if (has_code && task_name != "") print task_name
+    /```/ {
+      print task_name sep shell_name sep commands;
+      task_name = "";
+      shell_name = "";
+      commands = "";
+      next
+    }
+    shell_name != "" {
+      commands = commands (commands == "" ? "" : sep) $0;
+      next
     }
   ' "$cute_target")
 
-  local cute_task=$(echo "$cute_tasks" | fzf --prompt="Select a task to execute: ")
-  if [ -z "$cute_task" ]; then
+  local cute_task_names=$(echo "$cute_tasks" | awk -F'\x1f' '{print $1}')
+  local cute_task_name=$(echo "$cute_task_names" | fzf --prompt="Select a task to execute: ")
+  if [ -z "$cute_task_name" ]; then
     echo "No task selected."
     return 1
   fi
 
-  local cute_shell=$(awk -v task="$cute_task" -v heading="$cute_heading" '
-    BEGIN { in_task = 0; in_code = 0 }
-    $0 ~ "^" heading " " {
-      if ($0 ~ "^" heading " " task "$") {
-        in_task = 1
-      } else {
-        in_task = 0
-      }
-      next
-    }
-    in_task && match($0, /```(sh|shell|bash|zsh)/, m) {
-      print m[1]
-      exit
-    }
-  ' "$cute_target")
-  if [ -z "$cute_shell" ]; then
-    cute_shell="sh"
-  fi
-
-  local cute_command=$(awk -v task="$cute_task" -v heading="$cute_heading" '
-    BEGIN { in_task = 0; in_code = 0 }
-    $0 ~ "^" heading " " {
-      if ($0 ~ "^" heading " " task "$") {
-        in_task = 1
-      } else {
-        in_task = 0
-      }
-      next
-    }
-    in_task && /```(sh|shell|bash|zsh)/ {
-      in_code = 1
-      next
-    }
-    in_task && /```/ {
-      in_code = 0
-      next
-    }
-    in_task && in_code {
-      print $0
-    }
-  ' "$cute_target")
+  local cute_task=$(echo "$cute_tasks" | awk -F'\x1f' -v task="$cute_task_name" '$1 == task {print $0; exit}')
+  local cute_shell=$(echo "$cute_task" | awk -F'\x1f' '{print $2}')
+  local cute_command=$(echo "$cute_task" | awk -F'\x1f' '{print $3}' | sed "s/$(print '\x1f')/\n/g")
   if [ -z "$cute_command" ]; then
-    echo "No command found for task '$cute_task'."
+    echo "No command found for task '$cute_task_name'."
     return 1
   fi
 
   (
     if [ $cute_debug_mode -eq 1 ]; then
-      printf "${cute_color_success}▶ Executing task: %s\033[0m\n" "$cute_task"
+      printf "${cute_color_success}▶ Executing task: %s\033[0m\n" "$cute_task_name"
     fi
 
-    export PS4="$(printf "${cute_color_prompt}[%s]$ \033[0m" "$cute_task")"
+    export PS4="$(printf "${cute_color_prompt}[%s]$ \033[0m" "$cute_task_name")"
     script -eq -c "$cute_shell -c 'set -ux; $cute_command'" /dev/null
     local exit_code=$?
     if [ $exit_code -ne 0 ]; then
@@ -120,7 +98,7 @@ This will read tasks from CONTRIBUTING.md with "###" headings and enable debug m
     fi
 
     if [ $cute_debug_mode -eq 1 ]; then
-      printf "${cute_color_success}✔ Completed task: %s\033[0m\n" "$cute_task"
+      printf "${cute_color_success}✔ Completed task: %s\033[0m\n" "$cute_task_name"
     fi
   )
 }
