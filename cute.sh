@@ -79,7 +79,7 @@ This will read tasks from CONTRIBUTING.md with "###" headings and enable debug m
 
   local cute_task=$(echo "$cute_tasks" | awk -F'\x1f' -v task="$cute_task_name" '$1 == task {print $0; exit}')
   local cute_shell=$(echo "$cute_task" | awk -F'\x1f' '{print $2}')
-  local cute_command=$(echo "$cute_task" | awk -F'\x1f' '{print $3}' | sed "s/$(print '\x1f')/\n/g")
+  local cute_command=$(echo "$cute_task" | cut -d$'\x1f' -f3- | sed "s/$(print '\x1f')/\n/g")
   if [ -z "$cute_command" ]; then
     echo "No command found for task '$cute_task_name'."
     return 1
