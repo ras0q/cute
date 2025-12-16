@@ -1,25 +1,53 @@
-# Additional Tasks
+# Test Cases for Cute
 
-## Greet User
+## Simple Command
 
 ```sh
-echo "Hello from TASKS.md!"
+echo "test output"
 ```
 
-## List Files
+## Multiple Commands
+
+```sh
+echo "first"
+echo "second"
+```
+
+## Bash Shell
 
 ```bash
-# List all files in the current directory
-ls -la
-cd ..
-pwd # Print the current working directory
-ls -la
+echo "bash test"
 ```
 
-## Example Code Block
+## Zsh Shell
 
+```zsh
+echo "zsh test"
+```
+
+## Shell Variant
+
+```shell
+echo "shell variant test"
+```
+
+## Example Block (Should Be Ignored)
 
 ```sh
-$ echo hello
-hello
+$ echo "This should not execute"
+This should not execute
 ```
+
+## Multi-line with Variables
+
+```sh
+VAR="value"
+echo "Variable: $VAR"
+```
+
+## Command with Exit Code
+
+```sh
+exit 0
+```
+
