@@ -1,4 +1,6 @@
-# Cute: A CLI tool to exe"CUTE"s commands from markdown files.
+# Cute
+
+A CLI tool to exe"CUTE"s commands from markdown files.
 
 ```sh
 $ source ./cute.sh && cute -h
