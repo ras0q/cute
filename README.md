@@ -2,6 +2,8 @@
 
 A CLI tool to exe"CUTE"s commands from markdown files.
 
+![Demo](./demo/demo.gif)
+
 ```sh
 $ source ./cute.sh && cute -h
 Cute: A CLI tool to exe"CUTE"s commands from markdown files.

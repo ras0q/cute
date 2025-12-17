@@ -1,0 +1,3 @@
+[tools]
+"cargo:genact" = "latest"
+vhs = "latest"
