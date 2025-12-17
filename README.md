@@ -1,6 +1,6 @@
 # Cute
 
-Cute: A CLI tool to exe"CUTE"s commands from markdown files.
+**Cute**: A CLI tool to exe"CUTE"s commands from markdown files.
 
 ## Installation
 
@@ -82,6 +82,24 @@ Example:
   cute "Build Project"   # Execute task by name
   cute build test deploy # Execute multiple tasks in order
 ```
+
+## Comparison with Other Task Runners
+
+### vs [Make](https://www.gnu.org/software/make/)
+
+Make is a build system for managing file dependencies, not a task runner.
+
+### vs [npm scripts](https://docs.npmjs.com/cli/using-npm/scripts)
+
+**Cute** requires no Node.js installation and uses standard Markdown instead of JSON configuration.
+
+### vs [Task](https://taskfile.dev)
+
+**Cute** is pure shell requiring no binary installation, uses natural Markdown formatting instead of YAML, and works on any POSIX shell environment. Developers can opt-in to using the cute command without forcing adoption across the team.
+
+### vs [xc](https://xcfile.dev)
+
+**Cute** scans all Markdown files in the project instead of a single dedicated file (e.g. README.md), and any Markdown heading becomes a task without needing a `## Tasks` section.
 
 ## Acknowledgements
 
