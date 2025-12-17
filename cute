@@ -10,7 +10,7 @@ Usage:
 Options:
   -h: Show this help message and exit
   -l: List tasks
-  -v: Enable verbose mode (prints commands as they are executed)
+  -v: Enable verbose mode
 
 Arguments:
   TASK_NAME|SLUG: Task name or slug to execute. If specified, fuzzy search will be skipped.
