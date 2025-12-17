@@ -77,13 +77,23 @@ _cute_extract_tasks() {
 
 _cute_execute_task() {
   local cute_task="$@"
-  local cute_task_name=$(echo "$cute_task" | awk -F'\x1f' '{print $1}')
-  local cute_shell=$(echo "$cute_task" | awk -F'\x1f' '{print $3}')
-  local cute_command=$(echo "$cute_task" | cut -d$'\x1f' -f4- | sed "s/$(print '\x1f')/\n/g")
-  if [ -z "$cute_command" ]; then
-    echo "No command found for task '$cute_task_name'."
-    return 1
-  fi
+  echo "$cute_task" | tr '\037' '\n' | {
+    read -r cute_task_name
+    read -r cute_task_slug
+    read -r cute_shell
+    cute_command=""
+    while IFS= read -r line; do
+      if [ -z "$cute_command" ]; then
+        cute_command="$line"
+      else
+        cute_command="$cute_command"$'\n'"$line"
+      fi
+    done
+    if [ -z "$cute_task_name" ] || [ -z "$cute_task_slug" ] || [ -z "$cute_shell" ] || [ -z "$cute_command" ]; then
+      echo "Invalid task format for task: '$cute_task_name'"
+      return 1
+    fi
+  }
 
   (
     if [ $cute_debug_mode -eq 1 ]; then
