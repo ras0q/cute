@@ -150,13 +150,12 @@ cute() {
     return 0
   fi
 
-  local cute_requested_tasks=("$@")
-  if [ ${#cute_requested_tasks[@]} -eq 0 ]; then
+  if [ $# -eq 0 ]; then
     _cute_usage
     return 0
   fi
 
-  for cute_task_identifier in "${cute_requested_tasks[@]}"; do
+  for cute_task_identifier in "$@"; do
     local cute_task=$(echo "$cute_tasks" | awk -F'\x1f' -v identifier="$cute_task_identifier" '$1 == identifier || $2 == identifier {print $0; exit}')
 
     if [ -z "$cute_task" ]; then
@@ -167,3 +166,58 @@ cute() {
     _cute_execute_task "$cute_task"
   done
 }
+
+# Auto-setup completion for the current shell
+_cute_setup_completion() {
+  local shell_type
+  if [ -n "${ZSH_VERSION:-}" ]; then
+    shell_type="zsh"
+  elif [ -n "${BASH_VERSION:-}" ]; then
+    shell_type="bash"
+  else
+    return 0
+  fi
+
+  case "$shell_type" in
+    zsh)
+      _cute_zsh_completion() {
+        local tasks_output
+        tasks_output=$(cute -l 2>/dev/null || true)
+        local -a tasks
+        tasks=$(cute -l 2>/dev/null | xargs -I {} echo '"{}"' | tr '\n' ' ')
+
+        _arguments -C \
+          '-h[Show help message]' \
+          '-l[List tasks]' \
+          '-v[Enable verbose mode]' \
+          "*::task:(($tasks))"
+      }
+
+      compdef _cute_zsh_completion cute
+      ;;
+    bash)
+      _cute_bash_completion() {
+        local cur prev
+        cur="${COMP_WORDS[COMP_CWORD]}"
+        prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+        local tasks
+        tasks=$(cute -l 2>/dev/null || true)
+
+        # NOTE: eval wraps COMPREPLY=() to prevent fish from parsing bash-specific syntax
+        case "$prev" in
+          cute)
+            eval 'COMPREPLY=($(compgen -W "-h -l -v $tasks" -- "$cur"))'
+            ;;
+          *)
+            eval 'COMPREPLY=($(compgen -W "$tasks" -- "$cur"))'
+            ;;
+        esac
+      }
+
+      complete -o bashdefault -o default -o nospace -F _cute_bash_completion cute
+      ;;
+  esac
+}
+
+_cute_setup_completion
