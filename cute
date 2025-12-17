@@ -24,6 +24,10 @@ Example:
 EOF
 }
 
+_cute_find_markdown_files() {
+  find . -type f -name "*.md" -o -name "*.markdown" | sort
+}
+
 _cute_extract_tasks() {
   echo "$@" | xargs awk -v sep="\x1f" '
     function slugify(str) {
@@ -129,11 +133,15 @@ cute() {
   done
   shift $((OPTIND - 1))
 
-  cute_files="$(find . -type f -name "*.md" -o -name "*.markdown" | sort)"
+  cute_files="$(_cute_find_markdown_files)"
   cute_tasks="$(_cute_extract_tasks "$cute_files")" || return 1
 
   if [ $cute_list_mode -eq 1 ]; then
-    echo $cute_tasks | awk -F'\x1f' '{printf "%s\t%s\t%s\t%s\n", $1, $2, $3, $4}'
+    if [ "$cute_verbose_mode" -eq 1 ]; then
+      echo "$cute_tasks" | awk -F'\x1f' '{printf "%s\t%s\t%s\t%s\n", $1, $2, $3, $4}'
+    else
+      echo "$cute_tasks" | awk -F'\x1f' '{print $2}'
+    fi
     return 0
   fi
 
