@@ -81,23 +81,28 @@ _cute_extract_tasks() {
 
 _cute_execute_task() {
   local cute_task="$@"
-  echo "$cute_task" | tr '\037' '\n' | {
-    read -r cute_task_name
-    read -r cute_task_slug
-    read -r cute_shell
-    cute_command=""
-    while IFS= read -r line; do
-      if [ -z "$cute_command" ]; then
-        cute_command="$line"
-      else
-        cute_command="$cute_command"$'\n'"$line"
-      fi
-    done
-    if [ -z "$cute_task_name" ] || [ -z "$cute_task_slug" ] || [ -z "$cute_shell" ] || [ -z "$cute_command" ]; then
-      echo "_cute_execute_task: Invalid task format for task: '$cute_task_name'"
-      return 1
-    fi
-  }
+  local cute_task_name cute_task_slug cute_shell cute_command
+
+  eval "$(echo "$cute_task" | awk -F'\037' '
+    BEGIN { q = "\047" }
+    {
+      gsub(/\047/, "\047\\\047\047")
+      printf "cute_task_name=%s%s%s;\n", q, $1, q
+      printf "cute_task_slug=%s%s%s;\n", q, $2, q
+      printf "cute_shell=%s%s%s;\n", q, $3, q
+      printf "cute_command=%s", q
+      for(i=4; i<=NF; i++) {
+        if(i>4) printf "\n"
+        printf "%s", $i
+      }
+      printf "%s\n", q
+    }
+  ')"
+
+  if [ -z "$cute_task_name" ] || [ -z "$cute_task_slug" ] || [ -z "$cute_shell" ] || [ -z "$cute_command" ]; then
+    echo "_cute_execute_task: Invalid task format for task: '$cute_task_name'"
+    return 1
+  fi
 
   (
     if [ $cute_verbose_mode -eq 1 ]; then
