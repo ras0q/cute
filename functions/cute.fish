@@ -1,4 +1,4 @@
-function cute --description "Execute commands from markdown files"
+function cute --description "Execute commands from Markdown files"
     set -l cute_dir (set -q XDG_DATA_HOME; and echo $XDG_DATA_HOME; or echo $HOME/.local/share)/cute
     set -l cute_script "$cute_dir/cute"
 

@@ -7,7 +7,7 @@ echo "first"
 echo "second"
 ```
 
-### Cute can execute any shell code block in markdown headings
+### Cute can execute any shell code block in Markdown headings
 
 ```sh
 echo "h3 test"
