@@ -1,29 +1,6 @@
 #!/bin/sh -eu
 
-_cute_usage() {
-  cat <<EOF
-Cute: A CLI tool to executes commands from Markdown files.
-
-Usage:
-  cute [-h] [-l] [-v] [TASK_NAME|SLUG ...]
-
-Options:
-  -h: Show this help message and exit
-  -l: List tasks
-  -v: Enable verbose mode
-
-Arguments:
-  TASK_NAME|SLUG: Task name or slug to execute. If specified, fuzzy search will be skipped.
-                  Multiple tasks can be specified to execute them in order.
-
-Example:
-  cute -l                # List tasks
-  cute build             # Execute task with slug "build"
-  cute "Build Project"   # Execute task by name
-  cute build test deploy # Execute multiple tasks in order
-  cute \$(cute -l | fzf)  # Fuzzy search and execute a task using fzf
-EOF
-}
+# MARK: - Helper Functions
 
 _cute_find_markdown_files() {
   find . -type f -name "*.md" -o -name "*.markdown" | sort
@@ -80,18 +57,21 @@ _cute_extract_tasks() {
   '
 }
 
-_cute_execute_task() {
-  local cute_task="$@"
-  local cute_task_name cute_task_slug cute_shell cute_command
+_cute_decode_task() {
+  local task="$1"
+  local __name_var="$2"
+  local __slug_var="$3"
+  local __shell_var="$4"
+  local __command_var="$5"
 
-  eval "$(echo "$cute_task" | awk -F'\037' '
+  eval "$(echo "$task" | awk -F'\037' -v name_var="$__name_var" -v slug_var="$__slug_var" -v shell_var="$__shell_var" -v command_var="$__command_var" '
     BEGIN { q = "\047" }
     {
       gsub(/\047/, "\047\\\047\047")
-      printf "cute_task_name=%s%s%s;\n", q, $1, q
-      printf "cute_task_slug=%s%s%s;\n", q, $2, q
-      printf "cute_shell=%s%s%s;\n", q, $3, q
-      printf "cute_command=%s", q
+      printf "%s=%s%s%s;\n", name_var, q, $1, q
+      printf "%s=%s%s%s;\n", slug_var, q, $2, q
+      printf "%s=%s%s%s;\n", shell_var, q, $3, q
+      printf "%s=%s", command_var, q
       for(i=4; i<=NF; i++) {
         if(i>4) printf "\n"
         printf "%s", $i
@@ -99,82 +79,10 @@ _cute_execute_task() {
       printf "%s\n", q
     }
   ')"
-
-  if [ -z "$cute_task_name" ] || [ -z "$cute_task_slug" ] || [ -z "$cute_shell" ] || [ -z "$cute_command" ]; then
-    echo "_cute_execute_task: Invalid task format for task: '$cute_task_name'"
-    return 1
-  fi
-
-  (
-    if [ $cute_verbose_mode -eq 1 ]; then
-      printf "${cute_color_success}▶ Executing task: %s\033[0m\n" "$cute_task_name"
-    fi
-
-    export PS4="$(printf "${cute_color_prompt}[%s]$ \033[0m" "$cute_task_name")"
-    script -eq -c "$cute_shell -c 'set -ux; $cute_command'" /dev/null
-    local exit_code=$?
-    if [ $exit_code -ne 0 ]; then
-      return $exit_code
-    fi
-
-    if [ $cute_verbose_mode -eq 1 ]; then
-      printf "${cute_color_success}✔ Completed task: %s\033[0m\n" "$cute_task_name"
-    fi
-  )
 }
 
-cute() {
-  local cute_color_success="\033[32m"
-  local cute_color_error="\033[31m"
-  local cute_color_prompt="\033[90m"
+# MARK: - Shell Completion
 
-  local cute_help_mode=0
-  local cute_list_mode=0
-  local cute_verbose_mode=0
-  while getopts "hlv" opt; do
-    case "$opt" in
-      h) cute_help_mode=1 ;;
-      l) cute_list_mode=1 ;;
-      v) cute_verbose_mode=1 ;;
-    esac
-  done
-  shift $((OPTIND - 1))
-
-  cute_files="$(_cute_find_markdown_files)"
-  cute_tasks="$(_cute_extract_tasks "$cute_files")" || return 1
-
-  _cute_list_tasks() {
-    if [ "$cute_verbose_mode" -eq 1 ]; then
-      echo "$cute_tasks" | awk -F'\x1f' '{printf "%s\t%s\t%s\t%s\n", $1, $2, $3, $4}'
-    else
-      echo "$cute_tasks" | awk -F'\x1f' '{print $2}'
-    fi
-  }
-
-  if [ $cute_list_mode -eq 1 ]; then
-    _cute_list_tasks
-    return 0
-  fi
-
-  if [ $cute_help_mode -eq 1 ] || [ $# -eq 0 ]; then
-    _cute_usage
-    printf "\nAvailable tasks:\n%s\n" "$(_cute_list_tasks | sed 's/^/  /')"
-    return 0
-  fi
-
-  for cute_task_identifier in "$@"; do
-    local cute_task=$(echo "$cute_tasks" | awk -F'\x1f' -v identifier="$cute_task_identifier" '$1 == identifier || $2 == identifier {print $0; exit}')
-
-    if [ -z "$cute_task" ]; then
-      echo "cute: Task not found: '$cute_task_identifier'"
-      return 1
-    fi
-
-    _cute_execute_task "$cute_task"
-  done
-}
-
-# Auto-setup completion for the current shell
 _cute_setup_completion() {
   local shell_type
   if [ -n "${ZSH_VERSION:-}" ]; then
@@ -228,3 +136,108 @@ _cute_setup_completion() {
 }
 
 _cute_setup_completion
+
+# MARK: - Main Function
+
+_cute_usage() {
+  cat <<EOF
+Cute: A CLI tool to executes commands from Markdown files.
+
+Usage:
+  cute [-h] [-l] [-v] [TASK_NAME|SLUG ...]
+
+Options:
+  -h: Show this help message and exit
+  -l: List tasks
+  -v: Enable verbose mode
+
+Arguments:
+  TASK_NAME|SLUG: Task name or slug to execute. If specified, fuzzy search will be skipped.
+                  Multiple tasks can be specified to execute them in order.
+
+Example:
+  cute -l                # List tasks
+  cute build             # Execute task with slug "build"
+  cute "Build Project"   # Execute task by name
+  cute build test deploy # Execute multiple tasks in order
+  cute \$(cute -l | fzf)  # Fuzzy search and execute a task using fzf
+EOF
+}
+
+cute() {
+  local cute_color_success="\033[32m"
+  local cute_color_error="\033[31m"
+  local cute_color_prompt="\033[90m"
+
+  local cute_help_mode=0
+  local cute_list_mode=0
+  local cute_verbose_mode=0
+  while getopts "hlv" opt; do
+    case "$opt" in
+      h) cute_help_mode=1 ;;
+      l) cute_list_mode=1 ;;
+      v) cute_verbose_mode=1 ;;
+    esac
+  done
+  shift $((OPTIND - 1))
+
+  cute_files="$(_cute_find_markdown_files)"
+  cute_tasks="$(_cute_extract_tasks "$cute_files")" || return 1
+
+  _cute_list_tasks() {
+    if [ "$cute_verbose_mode" -eq 1 ]; then
+      echo "$cute_tasks" | awk -F'\x1f' '{printf "%s\t%s\t%s\t%s\n", $1, $2, $3, $4}'
+    else
+      echo "$cute_tasks" | awk -F'\x1f' '{print $2}'
+    fi
+  }
+
+  if [ $cute_list_mode -eq 1 ]; then
+    _cute_list_tasks
+    return 0
+  fi
+
+  if [ $cute_help_mode -eq 1 ] || [ $# -eq 0 ]; then
+    _cute_usage
+    printf "\nAvailable tasks:\n%s\n" "$(_cute_list_tasks | sed 's/^/  /')"
+    return 0
+  fi
+
+  for cute_task_identifier in "$@"; do
+    local cute_task=$(echo "$cute_tasks" | awk -F'\x1f' -v identifier="$cute_task_identifier" '$1 == identifier || $2 == identifier {print $0; exit}')
+
+    if [ -z "$cute_task" ]; then
+      echo "cute: Task not found: '$cute_task_identifier'"
+      return 1
+    fi
+
+    _cute_decode_task \
+      "$cute_task" \
+      cute_task_name \
+      cute_task_slug \
+      cute_shell \
+      cute_command
+    if [ -z "$cute_task_name" ] || [ -z "$cute_task_slug" ] || [ -z "$cute_shell" ] || [ -z "$cute_command" ]; then
+      echo "cute: Failed to decode task: '$cute_task_identifier'"
+      return 1
+    fi
+
+    (
+      if [ $cute_verbose_mode -eq 1 ]; then
+        printf "${cute_color_success}▶ Executing task: %s\033[0m\n" "$cute_task_name"
+      fi
+
+      export PS4="$(printf "${cute_color_prompt}[%s]$ \033[0m" "$cute_task_name")"
+      script -eq -c "$cute_shell -c 'set -ux; $cute_command'" /dev/null
+      local exit_code=$?
+      if [ $exit_code -ne 0 ]; then
+        return $exit_code
+      fi
+
+      if [ $cute_verbose_mode -eq 1 ]; then
+        printf "${cute_color_success}✔ Completed task: %s\033[0m\n" "$cute_task_name"
+      fi
+    )
+  done
+}
+
