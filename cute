@@ -2,8 +2,8 @@
 
 # MARK: - Helper Functions
 
-local _cute_rsep="\036"
-local _cute_usep="\037"
+_cute_rsep="\036"
+_cute_usep="\037"
 
 _cute_find_markdown_files() {
   local max_depth=$1
