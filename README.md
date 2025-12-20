@@ -15,6 +15,7 @@ Usage:
 Options:
   -h: Show this help message and exit
   -l: List tasks
+  -L: Limit search depth for Markdown files (default: 1)
   -v: Enable verbose mode
 
 Arguments:

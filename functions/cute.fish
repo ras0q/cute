@@ -25,5 +25,6 @@ end
 complete -c cute -f
 complete -c cute -n "__fish_seen_subcommand_from" -s h -d "Show help message"
 complete -c cute -n "__fish_seen_subcommand_from" -s l -d "List tasks"
+complete -c cute -n "__fish_seen_subcommand_from" -s L -d "Limit search depth for Markdown files"
 complete -c cute -n "__fish_seen_subcommand_from" -s v -d "Enable verbose mode"
 complete -c cute -a "(__fish_cute_tasks)" -d "Task slug"

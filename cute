@@ -6,7 +6,13 @@ local _cute_rsep="\036"
 local _cute_usep="\037"
 
 _cute_find_markdown_files() {
-  find . -type f -name "*.md" -o -name "*.markdown" | sort
+  local max_depth=$1
+  if [ -z "$max_depth" ]; then
+    echo "_cute_find_markdown_files: max_depth is required." > "/dev/stderr"
+    return 1
+  fi
+
+  find . -maxdepth $max_depth -type f -name "*.md" -o -name "*.markdown" | sort
 }
 
 # Extract tasks from markdown files.
@@ -135,6 +141,7 @@ _cute_setup_completion() {
         _arguments -C \
           '-h[Show help message]' \
           '-l[List tasks]' \
+          '-L=[Limit search depth for Markdown files]:depth:' \
           '-v[Enable verbose mode]' \
           "*::task:(($tasks))"
       }
@@ -180,6 +187,7 @@ Usage:
 Options:
   -h: Show this help message and exit
   -l: List tasks
+  -L: Limit search depth for Markdown files (default: 1)
   -v: Enable verbose mode
 
 Arguments:
@@ -202,17 +210,19 @@ cute() {
 
   local cute_help_mode=0
   local cute_list_mode=0
+  local cute_max_depth=1
   local cute_verbose_mode=0
-  while getopts "hlv" opt; do
+  while getopts "hlL:v" opt; do
     case "$opt" in
       h) cute_help_mode=1 ;;
       l) cute_list_mode=1 ;;
+      L) cute_max_depth="$OPTARG" ;;
       v) cute_verbose_mode=1 ;;
     esac
   done
   shift $((OPTIND - 1))
 
-  cute_files="$(_cute_find_markdown_files)"
+  cute_files="$(_cute_find_markdown_files "$cute_max_depth")" || return 1
   cute_tasks="$(_cute_extract_tasks "$cute_files")" || return 1
 
   _cute_list_tasks() {
