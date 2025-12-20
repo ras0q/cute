@@ -227,8 +227,10 @@ cute() {
         printf "${cute_color_success}▶ Executing task: %s\033[0m\n" "$cute_task_name"
       fi
 
-      export PS4="$(printf "${cute_color_prompt}[%s]$ \033[0m" "$cute_task_name")"
-      script -eq -c "$cute_shell -c 'set -ux; $cute_command'" /dev/null
+      local cute_ps4="$(printf "${cute_color_prompt}[%s]$ \033[0m" "$cute_task_name")"
+      local cute_task_exec="$cute_shell -c 'export PS4=\"$cute_ps4\"; set -ux; $cute_command'"
+      eval "$cute_task_exec"
+
       local exit_code=$?
       if [ $exit_code -ne 0 ]; then
         return $exit_code
