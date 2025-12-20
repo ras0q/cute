@@ -141,7 +141,7 @@ _cute_setup_completion
 
 _cute_usage() {
   cat <<EOF
-Cute: A CLI tool to executes commands from Markdown files.
+Cute: A CLI tool that exeCUTEs commands from Markdown files.
 
 Usage:
   cute [-h] [-l] [-v] [TASK_NAME|SLUG ...]
