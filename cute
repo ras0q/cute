@@ -2,12 +2,20 @@
 
 # MARK: - Helper Functions
 
+local _cute_rsep="\036"
+local _cute_usep="\037"
+
 _cute_find_markdown_files() {
   find . -type f -name "*.md" -o -name "*.markdown" | sort
 }
 
+# Extract tasks from markdown files.
+# Example: _cute_extract_tasks file0.md file1.md
+# Output format: Name0<US>Slug0<US>Shell0<US>Command0<RS>Name1<US>Slug1<US>Shell1<US>Command1<RS>...
 _cute_extract_tasks() {
-  echo "$@" | xargs awk -v sep="\x1f" '
+  local files="$@"
+
+  echo "$files" | xargs awk -v OFS="$_cute_usep" -v ORS="$_cute_rsep" '
     function slugify(str) {
       gsub(/[^a-zA-Z0-9]+/, "-", str)
       str = tolower(str)
@@ -26,10 +34,10 @@ _cute_extract_tasks() {
       if (task_name != "" && shell_name != "" && command != "") {
         slug = slugify(task_name);
         if (slug_seen[slug]++) {
-          print "_cute_extract_tasks: Duplicate slug detected: " slug > "/dev/stderr";
+          print "_cute_extract_tasks: Duplicate slug detected: " slug "\n" > "/dev/stderr";
           exit 1;
         }
-        print task_name sep slug sep shell_name sep command;
+        print task_name, slug, shell_name, command;
       }
       task_name = "";
       shell_name = "";
@@ -47,7 +55,7 @@ _cute_extract_tasks() {
       next
     }
     shell_name != "" {
-      command = command (command == "" ? "" : sep) $0;
+      command = command (command == "" ? "" : sep) $0 "\n";
       next
     }
     match($0, /^#{1,6} (.+)/, m) {
@@ -57,6 +65,24 @@ _cute_extract_tasks() {
   '
 }
 
+# Find a task by name or slug.
+# Example: _cute_find_task "$tasks" "Build"
+# Output format: Name<US>Slug<US>Shell<US>Command
+_cute_find_task() {
+  local tasks="$1"
+  local identifier="$2"
+
+  echo "$tasks" | awk -F"$_cute_usep" -v RS="$_cute_rsep" -v id="$identifier" '
+    $1 == id || $2 == id {
+      print $0;
+      exit 0;
+    }
+  '
+}
+
+# Decode a task string into its components.
+# Example: _cute_decode_task "Build Project<US>build<US>sh<US>echo Hello" name slug shell command
+# Sets variables: $name, $slug, $shell, $command
 _cute_decode_task() {
   local task="$1"
   local __name_var="$2"
@@ -64,17 +90,22 @@ _cute_decode_task() {
   local __shell_var="$4"
   local __command_var="$5"
 
-  eval "$(echo "$task" | awk -F'\037' -v name_var="$__name_var" -v slug_var="$__slug_var" -v shell_var="$__shell_var" -v command_var="$__command_var" '
+  eval "$(echo "$task" | awk \
+    -F"$_cute_usep" \
+    -v RS="$_cute_rsep" \
+    -v name_var="$__name_var" \
+    -v slug_var="$__slug_var" \
+    -v shell_var="$__shell_var" \
+    -v command_var="$__command_var" '
     BEGIN { q = "\047" }
     {
       gsub(/\047/, "\047\\\047\047")
       printf "%s=%s%s%s;\n", name_var, q, $1, q
       printf "%s=%s%s%s;\n", slug_var, q, $2, q
       printf "%s=%s%s%s;\n", shell_var, q, $3, q
-      printf "%s=%s", command_var, q
-      for(i=4; i<=NF; i++) {
-        if(i>4) printf "\n"
-        printf "%s", $i
+      printf "%s=%s%s", command_var, q, $4
+      for(i=5; i<=NF; i++) {
+        printf "\n%s", $i
       }
       printf "%s\n", q
     }
@@ -185,11 +216,14 @@ cute() {
   cute_tasks="$(_cute_extract_tasks "$cute_files")" || return 1
 
   _cute_list_tasks() {
-    if [ "$cute_verbose_mode" -eq 1 ]; then
-      echo "$cute_tasks" | awk -F'\x1f' '{printf "%s\t%s\t%s\t%s\n", $1, $2, $3, $4}'
+    local awk_command
+    if [ $cute_verbose_mode -eq 1 ]; then
+      awk_command='{print $1, $2, $3, $4}'
     else
-      echo "$cute_tasks" | awk -F'\x1f' '{print $2}'
+      awk_command='{print $2}'
     fi
+
+    echo "$cute_tasks" | awk -F"$_cute_usep" -v RS="$_cute_rsep" -v OFS="\t" "$awk_command"
   }
 
   if [ $cute_list_mode -eq 1 ]; then
@@ -204,8 +238,7 @@ cute() {
   fi
 
   for cute_task_identifier in "$@"; do
-    local cute_task=$(echo "$cute_tasks" | awk -F'\x1f' -v identifier="$cute_task_identifier" '$1 == identifier || $2 == identifier {print $0; exit}')
-
+    local cute_task=$(_cute_find_task "$cute_tasks" "$cute_task_identifier")
     if [ -z "$cute_task" ]; then
       echo "cute: Task not found: '$cute_task_identifier'"
       return 1
