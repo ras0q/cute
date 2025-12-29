@@ -2,7 +2,7 @@
 
 A CLI tool that exeCUTEs commands from Markdown files.
 
-![Demo](./demo/demo.gif)
+![Demo](https://raw.githubusercontent.com/ras0q/cute-demo/refs/heads/main/demo.gif)
 
 ```sh
 $ source <(curl -fsSL https://raw.githubusercontent.com/ras0q/cute/main/cute)
