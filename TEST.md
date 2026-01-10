@@ -75,3 +75,9 @@ echo "Variable: $VAR"
 exit 0
 ```
 
+## Quit if Error
+
+```sh
+false
+echo "This should not print"
+```

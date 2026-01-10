@@ -271,7 +271,7 @@ cute() {
       fi
 
       local cute_ps4="$(printf "${cute_color_prompt}[%s]$ \033[0m" "$cute_task_name")"
-      local cute_task_exec="$cute_shell -c 'export PS4=\"$cute_ps4\"; set -ux; $cute_command'"
+      local cute_task_exec="$cute_shell -c 'export PS4=\"$cute_ps4\"; set -eux; $cute_command'"
       eval "$cute_task_exec"
 
       local exit_code=$?
