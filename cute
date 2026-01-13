@@ -286,3 +286,12 @@ cute() {
   done
 }
 
+# MARK: - Direct Execution Support
+
+# Check if script is being sourced or directly executed
+# When sourced, $0 is the parent shell, when executed, $0 is this script
+if [ "${0##*/}" = "cute" ] && [ -z "${BASH_SOURCE:-}${ZSH_EVAL_CONTEXT:-}" ]; then
+  cute "$@"
+  exit $?
+fi
+

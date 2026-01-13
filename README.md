@@ -60,9 +60,20 @@ Cute scans all Markdown files in the project instead of a single dedicated file 
 
 ## Installation
 
-### Let's give it a try!
+### Basic Usage
 
-Cute is a pure shell script. You can try it out **without installation** by running:
+Download the script to a directory in your `PATH`, e.g. `~/.local/bin`:
+
+```sh
+CUTE_PATH=~/.local/bin/cute
+curl -fsSL https://raw.githubusercontent.com/ras0q/cute/main/cute -o $CUTE_PATH
+chmod +x $CUTE_PATH
+cute -h
+```
+
+### Execute Without Installation
+
+Cute is a pure shell script. You can try it out **without installation**:
 
 ```sh
 source <(curl -fsSL https://raw.githubusercontent.com/ras0q/cute/main/cute)
@@ -77,33 +88,11 @@ Using a plugin manager like [antidote](https://github.com/mattmc3/antidote):
 antidote install ras0q/cute
 ```
 
-Or add to your `~/.zshrc`:
-
-```zsh
-# In ~/.zshrc
-
-# Cute
-CUTE_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/cute"
-if [ ! -d "$CUTE_DIR" ]; then
-  git clone https://github.com/ras0q/cute "$CUTE_DIR"
-fi
-source "$CUTE_DIR/cute"
-```
+Or follow the [Basic Usage](#basic-usage).
 
 ### Bash
 
-Add to your `~/.bashrc`:
-
-```bash
-# In ~/.bashrc
-
-# Cute
-CUTE_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/cute"
-if [ ! -d "$CUTE_DIR" ]; then
-  git clone https://github.com/ras0q/cute "$CUTE_DIR"
-fi
-source "$CUTE_DIR/cute"
-```
+Follow the [Basic Usage](#basic-usage).
 
 ### Fish
 
@@ -113,15 +102,7 @@ Using [Fisher](https://github.com/jorgebucaran/fisher):
 fisher install ras0q/cute
 ```
 
-Or install the function manually:
-
-```fish
-set -l cute_functions_dir ~/.config/fish/functions
-mkdir -p $cute_functions_dir
-curl -fsSL https://raw.githubusercontent.com/ras0q/cute/main/functions/cute.fish -o $cute_functions_dir/cute.fish
-```
-
-The `cute` command will automatically download the script on first use.
+Or follow the [Basic Usage](#basic-usage).
 
 ## Acknowledgements
 
