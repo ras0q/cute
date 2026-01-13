@@ -104,6 +104,10 @@ fisher install ras0q/cute
 
 Or follow the [Basic Usage](#basic-usage).
 
+### Want Another Way?
+
+If your preferred package manager or installation method isn't listed, [open an issue](https://github.com/ras0q/cute/issues) and let us know!
+
 ## Acknowledgements
 
 - [joerdav/xc: Markdown defined task runner.](https://github.com/joerdav/xc): Cute is inspired by xc, but focuses on simplicity and ease of use.
