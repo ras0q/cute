@@ -52,7 +52,6 @@ $ cute Zsh Shell
 --- Running test: 'Shell Variant' ---
 $ cute Shell Variant
 [90m[Shell Variant]$ [0mecho shell variant test
-[90m[Shell Variant]$ [0mecho /usr/bin/zsh
 --- Test 'Shell Variant' passed. ---
 
 --- Running test: 'example block should be ignored' ---

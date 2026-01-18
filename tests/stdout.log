@@ -98,7 +98,6 @@ zsh test
 --- Running test: 'Shell Variant' ---
 $ cute Shell Variant
 shell variant test
-/usr/bin/zsh
 --- Test 'Shell Variant' passed. ---
 
 --- Running test: 'example block should be ignored' ---
