@@ -28,12 +28,20 @@ _cute_extract_tasks() {
       gsub(/^-+|-+$/, "", str)
       return str
     }
-    match($0, /^```(sh|shell|bash|zsh)/, m) {
+    /^```(sh|shell|bash|zsh)$/ {
       if (shell_name != "") {
         print "_cute_extract_tasks: The previous codeblock is not closed." > "/dev/stderr";
         exit 1;
       }
-      shell_name = (m[1] == "shell" ? "sh" : m[1]);
+      if ($0 ~ /^```sh$/) {
+        shell_name = "sh";
+      } else if ($0 ~ /^```shell$/) {
+        shell_name = "sh";
+      } else if ($0 ~ /^```bash$/) {
+        shell_name = "bash";
+      } else if ($0 ~ /^```zsh$/) {
+        shell_name = "zsh";
+      }
       next
     }
     /^```/ {
@@ -64,8 +72,10 @@ _cute_extract_tasks() {
       command = command (command == "" ? "" : sep) $0 "\n";
       next
     }
-    match($0, /^#{1,6} (.+)/, m) {
-      task_name = m[1];
+    /^#{1,6} / {
+      line = $0;
+      sub(/^#+[[:space:]]+/, "", line);
+      task_name = line;
       next
     }
   '
