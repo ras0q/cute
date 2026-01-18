@@ -8,7 +8,7 @@ _cute_usep="\037"
 _cute_find_markdown_files() {
   local max_depth=$1
   if [ -z "$max_depth" ]; then
-    echo "_cute_find_markdown_files: max_depth is required." > "/dev/stderr"
+    echo "_cute_find_markdown_files: max_depth is required." 1>&2
     return 1
   fi
 
@@ -250,7 +250,7 @@ cute() {
   for cute_task_identifier in "$@"; do
     local cute_task=$(_cute_find_task "$cute_tasks" "$cute_task_identifier")
     if [ -z "$cute_task" ]; then
-      echo "cute: Task not found: '$cute_task_identifier'"
+      echo "cute: Task not found: '$cute_task_identifier'" 1>&2
       return 1
     fi
 
@@ -261,7 +261,7 @@ cute() {
       cute_shell \
       cute_command
     if [ -z "$cute_task_name" ] || [ -z "$cute_task_slug" ] || [ -z "$cute_shell" ] || [ -z "$cute_command" ]; then
-      echo "cute: Failed to decode task: '$cute_task_identifier'"
+      echo "cute: Failed to decode task: '$cute_task_identifier'" 1>&2
       return 1
     fi
 
