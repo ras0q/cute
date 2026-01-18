@@ -8,14 +8,14 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v6
       - name: Run tests
         run: |
+          apt-get update && apt-get install -y bash zsh
           if ! ./tests/run-test.sh; then
             echo "Tests failed"
             git --no-pager diff
             exit 1
           fi
-        shell: zsh {0}
