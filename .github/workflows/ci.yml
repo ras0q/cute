@@ -12,4 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Run tests
-        run: ./tests/run-test.sh
+        run: |
+          if ! ./tests/run-test.sh; then
+            echo "Tests failed"
+            git --no-pager diff
+            exit 1
+          fi
+        shell: zsh {0}
