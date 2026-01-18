@@ -11,10 +11,12 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v6
-      - name: Run tests
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y bash zsh
+      - name: Run tests
+        run: |
           if ! ./tests/run-test.sh; then
             echo "Tests failed"
             git --no-pager diff
