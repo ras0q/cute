@@ -57,7 +57,6 @@ echo "$ZSH_VERSION"
 
 ```shell
 echo "shell variant test"
-echo "$SHELL"
 ```
 
 ## Example Block
