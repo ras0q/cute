@@ -1,0 +1,120 @@
+--- Running test: 'usage' ---
+$ cute -h
+Cute: A CLI tool that exeCUTEs commands from Markdown files.
+
+Usage:
+  cute [-h] [-l] [-v] [TASK_NAME|SLUG ...]
+
+Options:
+  -h: Show this help message and exit
+  -l: List tasks
+  -L: Limit search depth for Markdown files (default: 1)
+  -v: Enable verbose mode
+
+Arguments:
+  TASK_NAME|SLUG: Task name or slug to execute. If specified, fuzzy search will be skipped.
+                  Multiple tasks can be specified to execute them in order.
+
+Example:
+  cute -l                # List tasks
+  cute build             # Execute task with slug "build"
+  cute "Build Project"   # Execute task by name
+  cute build test deploy # Execute multiple tasks in order
+  cute $(cute -l | fzf)  # Fuzzy search and execute a task using fzf
+
+Available tasks:
+  test
+  cute-can-execute-any-shell-code-block-in-markdown-headings
+  h4
+  h5
+  h6
+  bash-shell
+  zsh-shell
+  shell-variant
+  multi-line-with-variables
+  command-with-exit-code
+  quit-if-error
+  
+--- Test 'usage' passed. ---
+
+--- Running test: 'list tasks' ---
+$ cute -l
+test
+cute-can-execute-any-shell-code-block-in-markdown-headings
+h4
+h5
+h6
+bash-shell
+zsh-shell
+shell-variant
+multi-line-with-variables
+command-with-exit-code
+quit-if-error
+
+--- Test 'list tasks' passed. ---
+
+--- Running test: 'test' ---
+$ cute Test
+first
+second
+--- Test 'test' passed. ---
+
+--- Running test: 'h3' ---
+$ cute Cute can execute any shell code block in Markdown headings
+h3 test
+--- Test 'h3' passed. ---
+
+--- Running test: 'h4' ---
+$ cute h4
+h4 test
+--- Test 'h4' passed. ---
+
+--- Running test: 'h5' ---
+$ cute h5
+h5 test
+--- Test 'h5' passed. ---
+
+--- Running test: 'h6' ---
+$ cute h6
+h6 test
+--- Test 'h6' passed. ---
+
+--- Running test: 'h7 (should be ignored)' ---
+$ cute h7
+--- Test 'h7 (should be ignored)' failed. ---
+
+--- Running test: 'Bash Shell' ---
+$ cute Bash Shell
+bash test
+5.2.21(1)-release
+--- Test 'Bash Shell' passed. ---
+
+--- Running test: 'Zsh Shell' ---
+$ cute Zsh Shell
+zsh test
+5.9
+--- Test 'Zsh Shell' passed. ---
+
+--- Running test: 'Shell Variant' ---
+$ cute Shell Variant
+shell variant test
+/usr/bin/zsh
+--- Test 'Shell Variant' passed. ---
+
+--- Running test: 'example block should be ignored' ---
+$ cute example block
+--- Test 'example block should be ignored' failed. ---
+
+--- Running test: 'multi-line with Variables' ---
+$ cute multi-line-with-variables
+Variable: value
+--- Test 'multi-line with Variables' passed. ---
+
+--- Running test: 'command with exit code' ---
+$ cute command-with-exit-code
+--- Test 'command with exit code' passed. ---
+
+--- Running test: 'Quit if Error' ---
+$ cute Quit if Error
+--- Test 'Quit if Error' failed. ---
+

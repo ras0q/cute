@@ -1,0 +1,78 @@
+--- Running test: 'usage' ---
+$ cute -h
+--- Test 'usage' passed. ---
+
+--- Running test: 'list tasks' ---
+$ cute -l
+--- Test 'list tasks' passed. ---
+
+--- Running test: 'test' ---
+$ cute Test
+[90m[Test]$ [0mecho first
+[90m[Test]$ [0mecho second
+--- Test 'test' passed. ---
+
+--- Running test: 'h3' ---
+$ cute Cute can execute any shell code block in Markdown headings
+[90m[Cute can execute any shell code block in Markdown headings]$ [0mecho h3 test
+--- Test 'h3' passed. ---
+
+--- Running test: 'h4' ---
+$ cute h4
+[90m[h4]$ [0mecho h4 test
+--- Test 'h4' passed. ---
+
+--- Running test: 'h5' ---
+$ cute h5
+[90m[h5]$ [0mecho h5 test
+--- Test 'h5' passed. ---
+
+--- Running test: 'h6' ---
+$ cute h6
+[90m[h6]$ [0mecho h6 test
+--- Test 'h6' passed. ---
+
+--- Running test: 'h7 (should be ignored)' ---
+$ cute h7
+cute: Task not found: 'h7'
+--- Test 'h7 (should be ignored)' failed. ---
+
+--- Running test: 'Bash Shell' ---
+$ cute Bash Shell
+[90m[Bash Shell]$ [0mecho 'bash test'
+[90m[Bash Shell]$ [0mecho '5.2.21(1)-release'
+--- Test 'Bash Shell' passed. ---
+
+--- Running test: 'Zsh Shell' ---
+$ cute Zsh Shell
+[90m[Zsh Shell]$ [0mecho 'zsh test'
+[90m[Zsh Shell]$ [0mecho 5.9
+--- Test 'Zsh Shell' passed. ---
+
+--- Running test: 'Shell Variant' ---
+$ cute Shell Variant
+[90m[Shell Variant]$ [0mecho shell variant test
+[90m[Shell Variant]$ [0mecho /usr/bin/zsh
+--- Test 'Shell Variant' passed. ---
+
+--- Running test: 'example block should be ignored' ---
+$ cute example block
+cute: Task not found: 'example block'
+--- Test 'example block should be ignored' failed. ---
+
+--- Running test: 'multi-line with Variables' ---
+$ cute multi-line-with-variables
+[90m[Multi-line with Variables]$ [0mVAR=value
+[90m[Multi-line with Variables]$ [0mecho Variable: value
+--- Test 'multi-line with Variables' passed. ---
+
+--- Running test: 'command with exit code' ---
+$ cute command-with-exit-code
+[90m[Command with Exit Code]$ [0mexit 0
+--- Test 'command with exit code' passed. ---
+
+--- Running test: 'Quit if Error' ---
+$ cute Quit if Error
+[90m[Quit if Error]$ [0mfalse
+--- Test 'Quit if Error' failed. ---
+
