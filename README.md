@@ -114,6 +114,8 @@ If your preferred package manager or installation method isn't listed, [open an 
 
 If you like Cute, please consider adding the following badge to your project's README to show compatibility and support:
 
+[![Cute compatible](https://raw.githubusercontent.com/ras0q/cute/refs/heads/main/badge.svg)](https://github.com/ras0q/cute)
+
 ```markdown
 [![Cute compatible](https://raw.githubusercontent.com/ras0q/cute/refs/heads/main/badge.svg)](https://github.com/ras0q/cute)
 ```
