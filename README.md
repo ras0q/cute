@@ -106,6 +106,40 @@ fisher install ras0q/cute
 
 Or follow the [Basic Usage](#basic-usage).
 
+### Nix (home-manager)
+
+You can install Cute using home-manager.
+
+```nix
+# flake.nix
+{
+  inputs.cute.url = "github:ras0q/cute";
+  inputs.home-manager.url = "github:nix-community/home-manager";
+
+  outputs = 
+# ...
+    home-manager.nixosModules.home-manager {
+      home-manager.users.me = {
+        imports = [
+          cute.homeModules.default
+          ({...}: {
+            programs.cute.enable = true;
+            programs.cute.installation = "basic"; # or "zsh-plugin"
+          })
+        ];
+      };
+    }
+}
+```
+
+### Nix (standalone)
+
+You can also use Cute as a single package.
+
+```sh
+nix run github:ras0q/cute
+```
+
 ### Want Another Way?
 
 If your preferred package manager or installation method isn't listed, [open an issue](https://github.com/ras0q/cute/issues) and let us know!
