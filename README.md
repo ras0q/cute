@@ -1,5 +1,7 @@
 # Cute
 
+[![Cute compatible](https://raw.githubusercontent.com/ras0q/cute/refs/heads/main/badge.svg)](https://github.com/ras0q/cute)
+
 A CLI tool that exeCUTEs commands from Markdown files.
 
 ![Demo](https://raw.githubusercontent.com/ras0q/cute-demo/refs/heads/main/demo.gif)
@@ -141,6 +143,18 @@ nix run github:ras0q/cute
 ### Want Another Way?
 
 If your preferred package manager or installation method isn't listed, [open an issue](https://github.com/ras0q/cute/issues) and let us know!
+
+## Show Your Love for Cute! 💖
+
+If you like Cute, please consider adding the following badge to your project's README to show compatibility and support:
+
+[![Cute compatible](https://raw.githubusercontent.com/ras0q/cute/refs/heads/main/badge.svg)](https://github.com/ras0q/cute)
+
+```markdown
+[![Cute compatible](https://raw.githubusercontent.com/ras0q/cute/refs/heads/main/badge.svg)](https://github.com/ras0q/cute)
+```
+
+Thank you for supporting Cute!
 
 ## Acknowledgements
 
