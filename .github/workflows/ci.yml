@@ -8,13 +8,12 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-slim
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y bash zsh
       - name: Run tests
         run: |
           if ! ./tests/run-test.sh; then
