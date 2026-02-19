@@ -10,10 +10,20 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-slim, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
+      - name: Install dependencies
+        run: |
+          case "${{ matrix.os }}" in
+            "ubuntu-slim")
+              sudo apt-get update && sudo apt-get install -y bash zsh
+              ;;
+            "macos-latest")
+              brew install bash zsh
+              ;;
+          esac
       - name: Run tests
         run: |
           if ! ./tests/run-test.sh; then
