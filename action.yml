@@ -1,0 +1,37 @@
+name: Cute Action
+description: Execute tasks defined in Markdown files using Cute
+author: ras0q
+
+branding:
+  icon: play-circle
+  color: purple
+
+inputs:
+  tasks:
+    description: |-
+      Newline-separated task names or slugs to execute.
+      Example:
+        build
+        test
+        Bash Shell
+    required: true
+  working-directory:
+    description: Directory to run cute in
+    required: false
+    default: "."
+
+runs:
+  using: composite
+  steps:
+    - name: Run cute
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        CUTE_TASKS: ${{ inputs.tasks }}
+      run: |
+        CUTE_PATH="${{ github.action_path }}/cute"
+        chmod +x "$CUTE_PATH"
+        while IFS= read -r task || [ -n "$task" ]; do
+          [ -z "$task" ] && continue
+          "$CUTE_PATH" "$task"
+        done <<< "$CUTE_TASKS"

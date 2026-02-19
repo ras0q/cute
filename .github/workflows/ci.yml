@@ -22,3 +22,15 @@ jobs:
             git --no-pager diff
             exit 1
           fi
+
+  action-test:
+    runs-on: ubuntu-slim
+    steps:
+      - uses: actions/checkout@v6
+      - name: Test cute-action
+        uses: ./
+        with:
+          tasks: |
+            test
+            Bash Shell
+          working-directory: ./tests

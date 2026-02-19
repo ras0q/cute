@@ -6,7 +6,7 @@ A CLI tool that exeCUTEs commands from Markdown files.
 
 ![Demo](https://raw.githubusercontent.com/ras0q/cute-demo/refs/heads/main/demo.gif)
 
-```sh
+```bash
 $ source <(curl -fsSL https://raw.githubusercontent.com/ras0q/cute/main/cute)
 $ cute -h
 Cute: A CLI tool that exeCUTEs commands from Markdown files.
@@ -68,6 +68,7 @@ Download the script to a directory in your `PATH`, e.g. `~/.local/bin`:
 
 ```sh
 CUTE_PATH=~/.local/bin/cute
+mkdir -p $(dirname $CUTE_PATH)
 curl -fsSL https://raw.githubusercontent.com/ras0q/cute/main/cute -o $CUTE_PATH
 chmod +x $CUTE_PATH
 cute -h
@@ -77,7 +78,7 @@ cute -h
 
 Cute is a pure shell script. You can try it out **without installation**:
 
-```sh
+```bash
 source <(curl -fsSL https://raw.githubusercontent.com/ras0q/cute/main/cute)
 cute -h
 ```
@@ -106,6 +107,20 @@ fisher install ras0q/cute
 
 Or follow the [Basic Usage](#basic-usage).
 
+### GitHub Actions
+
+Use `ras0q/cute` directly as a GitHub Actions step:
+
+```yaml
+- uses: ras0q/cute@main
+  with:
+    tasks: | # required, newline-separated task names or slugs
+      build
+      test
+      Bash Shell
+    working-directory: ./  # optional, defaults to current directory
+```
+
 ### Nix (home-manager)
 
 You can install Cute using home-manager.
@@ -116,7 +131,7 @@ You can install Cute using home-manager.
   inputs.cute.url = "github:ras0q/cute";
   inputs.home-manager.url = "github:nix-community/home-manager";
 
-  outputs = 
+  outputs =
 # ...
     home-manager.nixosModules.home-manager {
       home-manager.users.me = {
