@@ -86,13 +86,13 @@ $ cute h7
 --- Running test: 'Bash Shell' ---
 $ cute Bash Shell
 bash test
-5.2.21(1)-release
+This is bash
 --- Test 'Bash Shell' passed. ---
 
 --- Running test: 'Zsh Shell' ---
 $ cute Zsh Shell
 zsh test
-5.9
+This is zsh
 --- Test 'Zsh Shell' passed. ---
 
 --- Running test: 'Shell Variant' ---

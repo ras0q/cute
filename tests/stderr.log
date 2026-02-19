@@ -40,13 +40,15 @@ cute: Task not found: 'h7'
 --- Running test: 'Bash Shell' ---
 $ cute Bash Shell
 [90m[Bash Shell]$ [0mecho 'bash test'
-[90m[Bash Shell]$ [0mecho '5.2.21(1)-release'
+[90m[Bash Shell]$ [0m'[' -n '5.2.21(1)-release' ']'
+[90m[Bash Shell]$ [0mecho 'This is bash'
 --- Test 'Bash Shell' passed. ---
 
 --- Running test: 'Zsh Shell' ---
 $ cute Zsh Shell
 [90m[Zsh Shell]$ [0mecho 'zsh test'
-[90m[Zsh Shell]$ [0mecho 5.9
+[90m[Zsh Shell]$ [0m[ -n 5.9 ']'
+[90m[Zsh Shell]$ [0mecho 'This is zsh'
 --- Test 'Zsh Shell' passed. ---
 
 --- Running test: 'Shell Variant' ---
