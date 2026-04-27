@@ -222,6 +222,8 @@ cute() {
   local cute_list_mode=0
   local cute_max_depth=1
   local cute_verbose_mode=0
+
+  local OPTIND=1
   while getopts "hlL:v" opt; do
     case "$opt" in
       h) cute_help_mode=1 ;;
