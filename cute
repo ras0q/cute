@@ -234,6 +234,8 @@ cute() {
   done
   shift $((OPTIND - 1))
 
+  local cute_files
+  local cute_tasks
   cute_files="$(_cute_find_markdown_files "$cute_max_depth")" || return 1
   cute_tasks="$(_cute_extract_tasks "$cute_files")" || return 1
 
