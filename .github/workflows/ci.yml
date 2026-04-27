@@ -8,13 +8,22 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-slim
+    strategy:
+      matrix:
+        os: [ubuntu-slim, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y bash zsh
+          case "${{ matrix.os }}" in
+            "ubuntu-slim")
+              sudo apt-get update && sudo apt-get install -y bash zsh
+              ;;
+            "macos-latest")
+              brew install bash zsh
+              ;;
+          esac
       - name: Run tests
         run: |
           if ! ./tests/run-test.sh; then

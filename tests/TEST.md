@@ -43,14 +43,14 @@ echo "h7 test"
 
 ```bash
 echo "bash test"
-echo "$BASH_VERSION"
+[ -n "$BASH_VERSION" ] && echo "This is bash"
 ```
 
 ## Zsh Shell
 
 ```zsh
 echo "zsh test"
-echo "$ZSH_VERSION"
+[ -n "$ZSH_VERSION" ] && echo "This is zsh"
 ```
 
 ## Shell Variant
