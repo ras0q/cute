@@ -156,7 +156,9 @@ _cute_setup_completion() {
           "*::task:(($tasks))"
       }
 
-      compdef _cute_zsh_completion cute
+      if command -v compdef >/dev/null 2>&1; then
+        compdef _cute_zsh_completion cute
+      fi
       ;;
     bash)
       _cute_bash_completion() {
@@ -182,8 +184,6 @@ _cute_setup_completion() {
       ;;
   esac
 }
-
-_cute_setup_completion
 
 # MARK: - Main Function
 
@@ -234,6 +234,8 @@ cute() {
   done
   shift $((OPTIND - 1))
 
+  local cute_files
+  local cute_tasks
   cute_files="$(_cute_find_markdown_files "$cute_max_depth")" || return 1
   cute_tasks="$(_cute_extract_tasks "$cute_files")" || return 1
 
@@ -300,10 +302,25 @@ cute() {
 
 # MARK: - Direct Execution Support
 
-# Check if script is being sourced or directly executed
-# When sourced, $0 is the parent shell, when executed, $0 is this script
-if [ "${0##*/}" = "cute" ] && [ -z "${BASH_SOURCE:-}${ZSH_EVAL_CONTEXT:-}" ]; then
+_cute_is_sourced() {
+  if [ -n "${ZSH_VERSION:-}" ]; then
+    case ":${ZSH_EVAL_CONTEXT:-}:" in
+      *:file:*) return 0 ;;
+    esac
+    return 1
+  fi
+
+  if [ -n "${BASH_VERSION:-}" ]; then
+    [ "${BASH_SOURCE:-}" != "$0" ]
+    return $?
+  fi
+
+  [ "${0##*/}" != "cute" ]
+}
+
+if _cute_is_sourced; then
+  _cute_setup_completion
+else
   cute "$@"
   exit $?
 fi
-
