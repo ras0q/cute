@@ -38,7 +38,7 @@ Example:
 - Tasks defined in Markdown files with standard code blocks
 - Discovers tasks from all Markdown files in current directory
 - Execute tasks written in sh, bash, zsh, or shell
-- Built-in completion for bash and zsh
+- Shell completion through bash, zsh, and fish integration files
 - No configuration required
 - Opt-in adoption for teams
 
@@ -96,6 +96,12 @@ Or follow the [Basic Usage](#basic-usage).
 ### Bash
 
 Follow the [Basic Usage](#basic-usage).
+
+To enable Bash completion, place `cute.bash` next to `cute` and source it from your shell startup file:
+
+```bash
+source ~/.local/bin/cute.bash
+```
 
 ### Fish
 
