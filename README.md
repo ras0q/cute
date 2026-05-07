@@ -113,6 +113,16 @@ fisher install ras0q/cute
 
 Or follow the [Basic Usage](#basic-usage).
 
+### npm registry
+
+Install [@ras0q/cute](https://npmx.dev/package/@ras0q/cute) from npm:
+
+```sh
+npx @ras0q/cute
+# bun x @ras0q/cute
+# deno run npm:@ras0q/cute
+```
+
 ### GitHub Actions
 
 Use `ras0q/cute` directly as a GitHub Actions step:
@@ -164,6 +174,15 @@ nix run github:ras0q/cute
 ### Want Another Way?
 
 If your preferred package manager or installation method isn't listed, [open an issue](https://github.com/ras0q/cute/issues) and let us know!
+
+## Agent Skills
+
+If you're using an agent that supports skills, you can add the `ras0q/cute` skill to enable task execution from Markdown files in your projects.
+
+```sh
+npx skills add ras0q/cute
+# gh skill install ras0q/cute
+```
 
 ## Show Your Love for Cute! 💖
 
