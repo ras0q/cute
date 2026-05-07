@@ -1,6 +1,6 @@
 {
   "name": "@ras0q/cute",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "A CLI tool that exeCUTEs commands from Markdown files.",
   "license": "MIT",
   "repository": {
