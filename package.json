@@ -1,0 +1,32 @@
+{
+  "name": "@ras0q/cute",
+  "version": "0.0.1",
+  "description": "A CLI tool that exeCUTEs commands from Markdown files.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ras0q/cute.git"
+  },
+  "homepage": "https://github.com/ras0q/cute#readme",
+  "bugs": {
+    "url": "https://github.com/ras0q/cute/issues"
+  },
+  "keywords": [
+    "cli",
+    "markdown",
+    "shell",
+    "task-runner"
+  ],
+  "bin": {
+    "cute": "./cute"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "cute",
+    "cute.bash",
+    "cute.plugin.zsh",
+    "functions/cute.fish"
+  ]
+}
