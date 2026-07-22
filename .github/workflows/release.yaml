@@ -1,17 +1,15 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 jobs:
-  npm-publish:
-    name: Publish to npm
+  release:
+    name: Publish to npm and create release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -21,3 +19,9 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - name: Publish package to npm
         run: npm publish --provenance --access public
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="v$(node -p "require('./package.json').version")"
+          gh release create "$version" --target "$GITHUB_SHA" --generate-notes
