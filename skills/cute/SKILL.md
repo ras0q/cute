@@ -1,17 +1,22 @@
 ---
 name: cute
-description: Execute project tasks (build, test, lint, etc.) via Cute, a Markdown task runner.
-allowed-tools: Bash(cute:*)
+description: Discover and run repository tasks defined in Markdown with Cute. Use when asked to build, test, lint, format, type-check, validate, or run another documented project task with Cute.
+compatibility: Requires a POSIX shell and either `cute` on PATH or `npx` with network access. The agent must be permitted to execute shell commands and download the npm package when Cute is not installed.
 ---
 
 # Cute
 
-Enforce Cute as the strict execution boundary for repository tasks.
+Use Cute as the execution boundary for repository tasks. Do not interpret or reproduce a Markdown task body in the shell.
 
-- **Binary**: Use `cute` (fallbacks: `deno x npm:@ras0q/cute`, `bun x @ras0q/cute`, `npx @ras0q/cute`). Report if unavailable.
-- **Discover**: Use `cute -l` to find task slugs/headings.
-- **Execute**: Run `cute [task...]` or `cute -v [task...]`. Combine tasks for ordered execution (e.g., `cute build test`).
-- **Constraints**:
-  1. NEVER manually recreate a Cute task body in the shell.
-  2. NEVER bypass Cute to run underlying tool commands directly.
-  3. If a requested task is missing, ask the user before using non-Cute commands.
+## Run tasks
+
+1. Run [`scripts/run-cute.sh`](scripts/run-cute.sh) from the repository root. It uses `cute` on `PATH`, or downloads and runs `@ras0q/cute` with `npx --yes` when Cute is not installed.
+2. Discover task slugs with `scripts/run-cute.sh -l`.
+3. Execute one task with `scripts/run-cute.sh <slug-or-heading>`. Add `-v` when command tracing is needed.
+4. Pass multiple task slugs in the required order, for example `scripts/run-cute.sh build test`.
+
+## Boundaries
+
+- Never recreate a Cute task body or invoke its underlying commands directly.
+- If Cute cannot be run because `npx` is unavailable or the package download fails, report the launcher's error and ask the user how to proceed.
+- If a requested task is absent, report the available task slugs and ask before using a non-Cute command.
