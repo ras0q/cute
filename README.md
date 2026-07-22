@@ -1,6 +1,6 @@
 # Cute
 
-[![Cute compatible](https://raw.githubusercontent.com/ras0q/cute/refs/heads/main/badge.svg)](https://github.com/ras0q/cute)
+[![Cute task runner: run with `cute`](https://raw.githubusercontent.com/ras0q/cute/refs/heads/main/badge.svg)](https://github.com/ras0q/cute)
 
 A CLI tool that exeCUTEs commands from Markdown files.
 
@@ -188,10 +188,10 @@ npx skills add ras0q/cute
 
 If you like Cute, please consider adding the following badge to your project's README to show compatibility and support:
 
-[![Cute compatible](https://raw.githubusercontent.com/ras0q/cute/refs/heads/main/badge.svg)](https://github.com/ras0q/cute)
+[![Cute task runner: run with `cute`](https://raw.githubusercontent.com/ras0q/cute/refs/heads/main/badge.svg)](https://github.com/ras0q/cute)
 
 ```markdown
-[![Cute compatible](https://raw.githubusercontent.com/ras0q/cute/refs/heads/main/badge.svg)](https://github.com/ras0q/cute)
+[![Cute task runner: run with `cute`](https://raw.githubusercontent.com/ras0q/cute/refs/heads/main/badge.svg)](https://github.com/ras0q/cute)
 ```
 
 Thank you for supporting Cute!
