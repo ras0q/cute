@@ -27,6 +27,7 @@
     "cute",
     "cute.bash",
     "cute.plugin.zsh",
-    "functions/cute.fish"
+    "functions/cute.fish",
+    "skills"
   ]
 }
